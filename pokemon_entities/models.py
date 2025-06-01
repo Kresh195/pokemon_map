@@ -2,9 +2,10 @@ from django.db import models  # noqa F401
 
 
 class Pokemon(models.Model):
-    name = models.CharField(max_length=200)
+    Name = models.CharField(max_length=200)
+    Image = models.ImageField(null=True)
 
     def __str__(self):
-        return '{}'.format(self.name)
+        return '{}'.format(self.Name)
 
 # your models here
