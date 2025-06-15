@@ -14,4 +14,7 @@ class PokemonEntity(models.Model):
     Lat = models.FloatField()
     Lon = models.FloatField()
 
+    Appeared_at = models.DateTimeField()
+    Disapeared_at = models.DateTimeField()
+
 # your models here
