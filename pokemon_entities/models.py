@@ -18,7 +18,7 @@ class PokemonEntity(models.Model):
     Disapeared_at = models.DateTimeField()
 
     Level = models.IntegerField(default=10)
-    Healt = models.IntegerField(default=200)
+    Health = models.IntegerField(default=200)
     Strength = models.IntegerField(default=30)
     Defence = models.IntegerField(default=15)
     Stamina = models.IntegerField(default=20)
