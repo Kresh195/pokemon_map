@@ -1,5 +1,4 @@
 import folium
-import json
 
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
@@ -54,7 +53,7 @@ def show_all_pokemons(request):
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
             'img_url': pokemon_img_url,
-            'title_ru': pokemon.Name,
+            'title_ru': pokemon.Title_en,
         })
 
     return render(request, 'mainpage.html', context={
@@ -64,23 +63,30 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    with open('pokemon_entities/pokemons.json', encoding='utf-8') as database:
-        pokemons = json.load(database)['pokemons']
-
-    for pokemon in pokemons:
-        if pokemon['pokemon_id'] == int(pokemon_id):
-            requested_pokemon = pokemon
-            break
-    else:
+    pokemon_object = Pokemon.objects.get(id=pokemon_id)
+    pokemon_image_url = request.build_absolute_uri(str(
+        pokemon_object.Image.url))
+    pokemon = {
+        "title_en": pokemon_object.Title_en,
+        "title_ru": pokemon_object.Title_ru,
+        "img_url": pokemon_image_url
+    }
+    if not pokemon:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    for pokemon_entity in requested_pokemon['entities']:
-        add_pokemon(
-            folium_map, pokemon_entity['lat'],
-            pokemon_entity['lon'],
-            pokemon['img_url']
-        )
+
+    pokemon_entities = PokemonEntity.objects.filter(Pokemon=pokemon_object)
+    for pokemon_entity in pokemon_entities:
+        current_time = timezone.now()
+        if (pokemon_entity.Disapeared_at >= current_time and
+                pokemon_entity.Appeared_at <= current_time):
+            add_pokemon(
+                folium_map,
+                pokemon_entity.Lat,
+                pokemon_entity.Lon,
+                pokemon_image_url
+            )
 
     return render(request, 'pokemon.html', context={
         'map': folium_map._repr_html_(), 'pokemon': pokemon
