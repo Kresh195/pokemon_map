@@ -69,7 +69,8 @@ def show_pokemon(request, pokemon_id):
     pokemon = {
         "title_en": pokemon_object.Title_en,
         "title_ru": pokemon_object.Title_ru,
-        "img_url": pokemon_image_url
+        "img_url": pokemon_image_url,
+        "description": pokemon_object.Description
     }
     if not pokemon:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
